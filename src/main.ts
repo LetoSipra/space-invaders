@@ -1,20 +1,12 @@
-const canvas = <HTMLCanvasElement>document.querySelector('canvas');
-const ctx = <CanvasRenderingContext2D>canvas.getContext('2d');
+import { Ship } from './classes';
 
-canvas.width = 1000;
-canvas.height = 500;
+const canvas = <HTMLCanvasElement>document.querySelector('canvas');
+export const ctx = <CanvasRenderingContext2D>canvas.getContext('2d');
+
+canvas.width = 800;
+canvas.height = 600;
 
 ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-type coordinates = {
-  x: number;
-  y: number;
-};
-
-interface posvel {
-  position: coordinates;
-  velocity: coordinates;
-}
 
 const keys = {
   a: {
@@ -29,59 +21,41 @@ const keys = {
   s: {
     pressed: false,
   },
+  space: {
+    pressed: false,
+  },
 };
 
-class Sprite {
-  position: coordinates;
-  velocity: coordinates;
-  width: number;
-  height: number;
-
-  constructor({ position, velocity }: posvel) {
-    this.position = position;
-    this.velocity = velocity;
-    this.width = 50;
-    this.height = 50;
-  }
-
-  draw() {
-    ctx.fillStyle = 'red';
-    ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
-  }
-
-  update() {
-    this.draw();
-    this.position.x += this.velocity.x;
-    this.position.y += this.velocity.y;
-  }
-}
-
-const player = new Sprite({
+const player = new Ship({
   position: {
-    x: 50,
-    y: 50,
+    x: 350,
+    y: 525,
   },
   velocity: {
     x: 0,
     y: 0,
   },
 });
-player.draw();
 
 function animate() {
   window.requestAnimationFrame(animate);
   ctx.fillStyle = 'black';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   player.update();
-
   player.velocity.x = 0;
   player.velocity.y = 0;
-
+  player.lasers.forEach((laser) => {
+    laser.update();
+  });
+  //Movement && Attack
+  if (keys.space.pressed) {
+    player.attack();
+  }
   if (keys.a.pressed && player.position.x - player.velocity.x > 0) {
     player.velocity.x = -10;
   } else if (
     keys.d.pressed &&
-    player.position.x + player.velocity.x + 50 < canvas.width
+    player.position.x + player.velocity.x + player.width < canvas.width
   ) {
     player.velocity.x = 10;
   }
@@ -89,14 +63,14 @@ function animate() {
     player.velocity.y = -10;
   } else if (
     keys.s.pressed &&
-    player.position.y + player.velocity.y + 50 < canvas.height
+    player.position.y + player.velocity.y + player.height < canvas.height
   ) {
     player.velocity.y = 10;
   }
 }
 
-window.addEventListener('keydown', (event) => {
-  switch (event.key) {
+window.addEventListener('keydown', (e) => {
+  switch (e.key) {
     case 'd':
       keys.d.pressed = true;
       break;
@@ -109,11 +83,14 @@ window.addEventListener('keydown', (event) => {
     case 's':
       keys.s.pressed = true;
       break;
+    case ' ':
+      keys.space.pressed = true;
+      break;
   }
 });
 
-window.addEventListener('keyup', (event) => {
-  switch (event.key) {
+window.addEventListener('keyup', (e) => {
+  switch (e.key) {
     case 'd':
       keys.d.pressed = false;
       break;
@@ -126,7 +103,11 @@ window.addEventListener('keyup', (event) => {
     case 's':
       keys.s.pressed = false;
       break;
+    case ' ':
+      keys.space.pressed = false;
+      break;
   }
 });
 
 animate();
+player.draw();
