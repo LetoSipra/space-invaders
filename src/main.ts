@@ -35,6 +35,18 @@ const player = new Ship({
     x: 0,
     y: 0,
   },
+  imageSrc: '../assets/Fighter/idleMove.png',
+  frames: 6,
+  offset: {
+    x: 100,
+    y: 100,
+  },
+  sprites: {
+    idle: {
+      imageSrc: '../assets/Fighter/idleMove.png',
+      frames: 6,
+    },
+  },
 });
 
 function animate() {
@@ -46,6 +58,9 @@ function animate() {
   player.velocity.y = 0;
   player.lasers.forEach((laser) => {
     laser.update();
+    if (laser.position.y < 0) {
+      player.lasers.splice(player.lasers.indexOf(laser), 1);
+    }
   });
   //Movement && Attack
   if (keys.space.pressed) {
