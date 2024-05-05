@@ -1,12 +1,10 @@
-import { Ship } from './classes';
+import { Parallax, Ship } from './classes';
 
-const canvas = <HTMLCanvasElement>document.querySelector('canvas');
+export const canvas = <HTMLCanvasElement>document.querySelector('canvas');
 export const ctx = <CanvasRenderingContext2D>canvas.getContext('2d');
 
 canvas.width = 800;
 canvas.height = 600;
-
-ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 const keys = {
   a: {
@@ -35,25 +33,50 @@ const player = new Ship({
     x: 0,
     y: 0,
   },
-  imageSrc: '../assets/Fighter/idleMove.png',
-  frames: 6,
+  imageSrc: '../assets/Fighter/Idle.png',
+  frames: 1,
   offset: {
     x: 100,
     y: 100,
   },
   sprites: {
     idle: {
-      imageSrc: '../assets/Fighter/idleMove.png',
+      imageSrc: '../assets/Fighter/idle.png',
       frames: 6,
+    },
+    turnLeft: {
+      imageSrc: '../assets/Fighter/turnLeft.png',
+      frames: 1,
+    },
+    turnRight: {
+      imageSrc: '../assets/Fighter/turnRight.png',
+      frames: 1,
+    },
+    boost: {
+      imageSrc: '../assets/Fighter/boost.png',
+      frames: 5,
+    },
+    evasion: {
+      imageSrc: '../assets/Fighter/evasion.png',
+      frames: 8,
     },
   },
 });
 
+const bg = new Image();
+bg.src = '../assets/bg.jpg';
+
+const background = new Parallax({
+  image: bg,
+  speedModifier: 0.5,
+});
+
 function animate() {
-  window.requestAnimationFrame(animate);
-  ctx.fillStyle = 'black';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  background.update();
+  background.draw();
   player.update();
+  window.requestAnimationFrame(animate);
   player.velocity.x = 0;
   player.velocity.y = 0;
   player.lasers.forEach((laser) => {
@@ -66,21 +89,26 @@ function animate() {
   if (keys.space.pressed) {
     player.attack();
   }
+
   if (keys.a.pressed && player.position.x - player.velocity.x > 0) {
-    player.velocity.x = -10;
+    player.velocity.x = -5;
+    player.spriteState('turnLeft');
   } else if (
     keys.d.pressed &&
     player.position.x + player.velocity.x + player.width < canvas.width
   ) {
-    player.velocity.x = 10;
-  }
+    player.velocity.x = 5;
+    player.spriteState('turnRight');
+  } else player.spriteState('idle');
+
   if (keys.w.pressed && player.position.y - player.velocity.y > 0) {
-    player.velocity.y = -10;
+    player.velocity.y = -5;
+    player.spriteState('boost');
   } else if (
     keys.s.pressed &&
     player.position.y + player.velocity.y + player.height < canvas.height
   ) {
-    player.velocity.y = 10;
+    player.velocity.y = 5;
   }
 }
 
@@ -125,4 +153,3 @@ window.addEventListener('keyup', (e) => {
 });
 
 animate();
-player.draw();

@@ -6,4 +6,11 @@ export type spriteSources = {
 
 export interface Sprites {
   idle: spriteSources;
+  turnLeft: spriteSources;
+  turnRight: spriteSources;
+}
+
+export interface parallaxConstructor {
+  image: HTMLImageElement;
+  speedModifier: number;
 }
