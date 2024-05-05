@@ -11,6 +11,6 @@ export interface Sprites {
 }
 
 export interface parallaxConstructor {
-  image: HTMLImageElement;
-  speedModifier: number;
+  imageSource: string;
+  speed: number;
 }

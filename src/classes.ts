@@ -24,37 +24,38 @@ export class Parallax {
   y: number;
   width: number;
   height: number;
-  y2: number;
   image: HTMLImageElement;
   speedModifier: number;
   speed: number;
 
-  constructor({ image, speedModifier }: parallaxConstructor) {
+  constructor({ imageSource, speed }: parallaxConstructor) {
     this.x = 0;
     this.y = 0;
     this.width = canvas.width;
     this.height = canvas.height;
-    this.y2 = this.height;
-    this.image = image;
-    this.speedModifier = speedModifier;
-    this.speed = 5 * this.speedModifier;
+    this.image = new Image();
+    this.image.src = imageSource;
+    this.speedModifier = 1;
+    this.speed = speed * this.speedModifier;
   }
 
   update() {
-    console.log(this.y, this.y2);
-    this.speed = 1 * this.speedModifier;
-    if (this.y <= -this.height) {
-      this.y = this.height + this.y2 - this.speed;
+    this.draw();
+
+    this.y += this.speed;
+    if (this.y == canvas.height) {
+      this.y = 0;
     }
-    if (this.y2 <= -this.height) {
-      this.y2 = this.height + this.y - this.speed;
-    }
-    this.y = Math.ceil(this.y + this.speed);
-    this.y2 = Math.ceil(this.y2 + this.speed);
   }
   draw() {
     ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
-    ctx.drawImage(this.image, this.x, this.y2, this.width, this.height);
+    ctx.drawImage(
+      this.image,
+      this.x,
+      this.y - canvas.height,
+      this.width,
+      this.height
+    );
   }
 }
 

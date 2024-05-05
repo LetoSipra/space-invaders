@@ -63,18 +63,14 @@ const player = new Ship({
   },
 });
 
-const bg = new Image();
-bg.src = '../assets/bg.jpg';
-
 const background = new Parallax({
-  image: bg,
-  speedModifier: 0.5,
+  imageSource: '../assets/bg.png',
+  speed: 1,
 });
 
 function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   background.update();
-  background.draw();
   player.update();
   window.requestAnimationFrame(animate);
   player.velocity.x = 0;
