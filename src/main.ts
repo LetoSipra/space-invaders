@@ -56,9 +56,9 @@ const player = new Ship({
       imageSrc: '../assets/Fighter/boost.png',
       frames: 5,
     },
-    evasion: {
-      imageSrc: '../assets/Fighter/evasion.png',
-      frames: 8,
+    back: {
+      imageSrc: '../assets/Fighter/back.png',
+      frames: 1,
     },
   },
 });
@@ -105,6 +105,7 @@ function animate() {
     player.position.y + player.velocity.y + player.height < canvas.height
   ) {
     player.velocity.y = 5;
+    player.spriteState('back');
   }
 }
 

@@ -1,22 +1,67 @@
 import { canvas, ctx } from './main';
-import { parallaxConstructor } from './typings';
 
-type coordinates = {
-  x: number;
-  y: number;
-};
-
-type posvel = {
+class Sprite {
   position: coordinates;
-  velocity: coordinates;
-};
-
-interface shipConstructor extends posvel {
-  health?: number;
-  sprites: any;
-  imageSrc: string;
+  width: number;
+  height: number;
+  image: HTMLImageElement;
+  scale: number;
   frames: number;
+  framesCurrent: number;
+  framesElapsed: number;
+  framesHold: number;
   offset: coordinates;
+
+  constructor({
+    position,
+    imageSource,
+    scale = 1,
+    frames = 1,
+    offset = { x: 0, y: 0 },
+  }: spriteConstructor) {
+    this.position = position;
+    this.width = 50;
+    this.height = 150;
+    this.image = new Image();
+    this.image.src = imageSource;
+    this.scale = scale;
+    this.frames = frames;
+    this.framesCurrent = 0;
+    this.framesElapsed = 0;
+    this.framesHold = 5;
+    this.offset = offset;
+  }
+
+  draw() {
+    ctx.drawImage(
+      this.image,
+      this.framesCurrent * (this.image.width / this.frames),
+      0,
+      this.image.width / this.frames,
+      this.image.height,
+      this.position.x - this.offset.x,
+      this.position.y - this.offset.y,
+      (this.image.width / this.frames) * this.scale,
+      this.image.height * this.scale
+    );
+  }
+
+  animateFrames() {
+    this.framesElapsed++;
+
+    if (this.framesElapsed % this.framesHold === 0) {
+      if (this.framesCurrent < this.frames - 1) {
+        this.framesCurrent++;
+      } else {
+        this.framesCurrent = 0;
+      }
+    }
+  }
+
+  update() {
+    this.draw();
+    this.animateFrames();
+  }
 }
 
 export class Parallax {
@@ -165,10 +210,12 @@ export class Ship {
             x: 0,
             y: -10,
           },
+          playerAmmo: '../assets/Fighter/playerAmmo.png',
         })
       );
     }
   }
+
   spriteState(sprite: string) {
     switch (sprite) {
       case 'idle':
@@ -199,10 +246,10 @@ export class Ship {
           this.currentFrame = 0;
         }
         break;
-      case 'evasion':
-        if (this.image !== this.sprites.evasion.image) {
-          this.image = this.sprites.evasion.image!;
-          this.frames = this.sprites.evasion.frames;
+      case 'back':
+        if (this.image !== this.sprites.back.image) {
+          this.image = this.sprites.back.image!;
+          this.frames = this.sprites.back.frames;
           this.currentFrame = 0;
         }
         break;
@@ -215,16 +262,26 @@ class Laser {
   velocity: coordinates;
   width: number;
   height: number;
+  playerAmmo: string;
+  image: HTMLImageElement;
 
-  constructor({ position, velocity }: posvel) {
+  constructor({ position, velocity, playerAmmo }: laserConstructor) {
     this.position = position;
     this.velocity = velocity;
     this.width = 10;
     this.height = 20;
+    this.playerAmmo = playerAmmo;
+    this.image = new Image();
+    this.image.src = this.playerAmmo;
   }
   draw() {
-    ctx.fillStyle = 'white';
-    ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
+    ctx.drawImage(
+      this.image,
+      this.position.x,
+      this.position.y,
+      this.width,
+      this.height
+    );
   }
 
   update() {

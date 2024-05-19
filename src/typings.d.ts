@@ -1,16 +1,32 @@
-export type spriteSources = {
-  imageSrc: string;
-  frames: number;
-  image?: HTMLImageElement;
+type coordinates = {
+  x: number;
+  y: number;
 };
 
-export interface Sprites {
-  idle: spriteSources;
-  turnLeft: spriteSources;
-  turnRight: spriteSources;
+type posvel = {
+  position: coordinates;
+  velocity: coordinates;
+};
+
+interface laserConstructor extends posvel {
+  playerAmmo: string;
+}
+interface shipConstructor extends posvel {
+  health?: number;
+  sprites: any;
+  imageSrc: string;
+  frames: number;
+  offset: coordinates;
 }
 
-export interface parallaxConstructor {
+interface parallaxConstructor {
   imageSource: string;
   speed: number;
+}
+
+interface spriteConstructor extends posvel {
+  imageSource: string;
+  scale: number;
+  frames: number;
+  offset: coordinates;
 }
