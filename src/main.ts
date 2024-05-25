@@ -39,6 +39,8 @@ const player = new Ship({
     x: 100,
     y: 100,
   },
+  scale: 1,
+  framesMax: 1,
   sprites: {
     idle: {
       imageSrc: '../assets/Fighter/idle.png',
@@ -64,7 +66,7 @@ const player = new Ship({
 });
 
 const background = new Parallax({
-  imageSource: '../assets/bg.png',
+  imageSrc: '../assets/bg.png',
   speed: 1,
 });
 

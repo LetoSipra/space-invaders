@@ -17,16 +17,19 @@ interface shipConstructor extends posvel {
   imageSrc: string;
   frames: number;
   offset: coordinates;
+  scale: number;
+  framesMax: number;
 }
 
 interface parallaxConstructor {
-  imageSource: string;
+  imageSrc: string;
   speed: number;
 }
 
-interface spriteConstructor extends posvel {
-  imageSource: string;
+interface spriteConstructor {
+  position: coordinates;
+  imageSrc: string;
   scale: number;
-  frames: number;
+  framesMax: number;
   offset: coordinates;
 }

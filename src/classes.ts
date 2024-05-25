@@ -6,7 +6,7 @@ class Sprite {
   height: number;
   image: HTMLImageElement;
   scale: number;
-  frames: number;
+  framesMax: number;
   framesCurrent: number;
   framesElapsed: number;
   framesHold: number;
@@ -14,18 +14,18 @@ class Sprite {
 
   constructor({
     position,
-    imageSource,
+    imageSrc,
     scale = 1,
-    frames = 1,
+    framesMax = 1,
     offset = { x: 0, y: 0 },
   }: spriteConstructor) {
     this.position = position;
     this.width = 50;
     this.height = 150;
     this.image = new Image();
-    this.image.src = imageSource;
+    this.image.src = imageSrc;
     this.scale = scale;
-    this.frames = frames;
+    this.framesMax = framesMax;
     this.framesCurrent = 0;
     this.framesElapsed = 0;
     this.framesHold = 5;
@@ -35,13 +35,13 @@ class Sprite {
   draw() {
     ctx.drawImage(
       this.image,
-      this.framesCurrent * (this.image.width / this.frames),
+      this.framesCurrent * (this.image.width / this.framesMax),
       0,
-      this.image.width / this.frames,
+      this.image.width / this.framesMax,
       this.image.height,
       this.position.x - this.offset.x,
       this.position.y - this.offset.y,
-      (this.image.width / this.frames) * this.scale,
+      (this.image.width / this.framesMax) * this.scale,
       this.image.height * this.scale
     );
   }
@@ -50,7 +50,7 @@ class Sprite {
     this.framesElapsed++;
 
     if (this.framesElapsed % this.framesHold === 0) {
-      if (this.framesCurrent < this.frames - 1) {
+      if (this.framesCurrent < this.framesMax - 1) {
         this.framesCurrent++;
       } else {
         this.framesCurrent = 0;
@@ -73,13 +73,13 @@ export class Parallax {
   speedModifier: number;
   speed: number;
 
-  constructor({ imageSource, speed }: parallaxConstructor) {
+  constructor({ imageSrc, speed }: parallaxConstructor) {
     this.x = 0;
     this.y = 0;
     this.width = canvas.width;
     this.height = canvas.height;
     this.image = new Image();
-    this.image.src = imageSource;
+    this.image.src = imageSrc;
     this.speedModifier = 1;
     this.speed = speed * this.speedModifier;
   }
@@ -104,8 +104,7 @@ export class Parallax {
   }
 }
 
-export class Ship {
-  position: coordinates;
+export class Ship extends Sprite {
   velocity: coordinates;
   width: number;
   height: number;
@@ -128,12 +127,15 @@ export class Ship {
     sprites,
     imageSrc,
     frames,
+    framesMax = 1,
+    scale = 1,
     offset = {
       x: 0,
       y: 0,
     },
   }: shipConstructor) {
-    this.position = position;
+    super({ position, imageSrc, scale, framesMax, offset });
+
     this.velocity = velocity;
     this.width = 60;
     this.height = 60;
@@ -154,31 +156,6 @@ export class Ship {
       sprites[sprite].image = new Image();
       sprites[sprite].image.src = sprites[sprite].imageSrc;
     }
-  }
-
-  animateFrames() {
-    this.frameCount++;
-    if (this.frameCount % this.frame === 0) {
-      if (this.currentFrame < this.frames - 1) {
-        this.currentFrame++;
-      } else {
-        this.currentFrame = 0;
-      }
-    }
-  }
-
-  draw() {
-    ctx.drawImage(
-      this.image,
-      0,
-      this.currentFrame * (this.image.height / this.frames),
-      this.image.width,
-      this.image.height / this.frames,
-      this.position.x - this.offset.x,
-      this.position.y - this.offset.y,
-      this.image.width,
-      this.image.height / this.frames
-    );
   }
 
   update() {
