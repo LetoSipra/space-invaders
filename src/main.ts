@@ -1,10 +1,75 @@
-import { Parallax, Ship } from './classes';
+import { ParallaxBackground } from './classes/parallaxBackground';
+import { PlayerShip } from './classes/player';
 
 export const canvas = <HTMLCanvasElement>document.querySelector('canvas');
 export const ctx = <CanvasRenderingContext2D>canvas.getContext('2d');
 
 canvas.width = 800;
 canvas.height = 600;
+
+const player = new PlayerShip({
+  position: {
+    x: 350,
+    y: 525,
+  },
+  velocity: {
+    x: 0,
+    y: 0,
+  },
+  imageSrc: '../assets/Fighter/Idle.png',
+  frames: 6,
+  offset: {
+    x: 100,
+    y: 100,
+  },
+  scale: 1,
+  sprites: {
+    idle: {
+      imageSrc: '../assets/Fighter/idle.png',
+      frames: 6,
+    },
+    turnLeft: {
+      imageSrc: '../assets/Fighter/turnLeft.png',
+      frames: 1,
+    },
+    turnRight: {
+      imageSrc: '../assets/Fighter/turnRight.png',
+      frames: 1,
+    },
+    boost: {
+      imageSrc: '../assets/Fighter/boost.png',
+      frames: 5,
+    },
+    back: {
+      imageSrc: '../assets/Fighter/back.png',
+      frames: 1,
+    },
+  },
+});
+
+const background = new ParallaxBackground({
+  imageSrc: '../assets/bg.png',
+  speed: 1,
+});
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  background.update();
+  player.update();
+  window.requestAnimationFrame(animate);
+  playerMovement();
+
+  player.lasers.forEach((laser) => {
+    laser.update();
+    if (laser.position.y < 0) {
+      player.lasers.splice(player.lasers.indexOf(laser), 1);
+    }
+  });
+
+  if (keys.space.pressed) {
+    player.attack();
+  }
+}
 
 const keys = {
   a: {
@@ -24,68 +89,7 @@ const keys = {
   },
 };
 
-const player = new Ship({
-  position: {
-    x: 350,
-    y: 525,
-  },
-  velocity: {
-    x: 0,
-    y: 0,
-  },
-  imageSrc: '../assets/Fighter/Idle.png',
-  frames: 1,
-  offset: {
-    x: 100,
-    y: 100,
-  },
-  sprites: {
-    idle: {
-      imageSrc: '../assets/Fighter/idle.png',
-      frames: 6,
-    },
-    turnLeft: {
-      imageSrc: '../assets/Fighter/turnLeft.png',
-      frames: 1,
-    },
-    turnRight: {
-      imageSrc: '../assets/Fighter/turnRight.png',
-      frames: 1,
-    },
-    boost: {
-      imageSrc: '../assets/Fighter/boost.png',
-      frames: 5,
-    },
-    evasion: {
-      imageSrc: '../assets/Fighter/evasion.png',
-      frames: 8,
-    },
-  },
-});
-
-const background = new Parallax({
-  imageSource: '../assets/bg.png',
-  speed: 1,
-});
-
-function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  background.update();
-  player.update();
-  window.requestAnimationFrame(animate);
-  player.velocity.x = 0;
-  player.velocity.y = 0;
-  player.lasers.forEach((laser) => {
-    laser.update();
-    if (laser.position.y < 0) {
-      player.lasers.splice(player.lasers.indexOf(laser), 1);
-    }
-  });
-  //Movement && Attack
-  if (keys.space.pressed) {
-    player.attack();
-  }
-
+function playerMovement() {
   if (keys.a.pressed && player.position.x - player.velocity.x > 0) {
     player.velocity.x = -5;
     player.spriteState('turnLeft');
@@ -105,6 +109,7 @@ function animate() {
     player.position.y + player.velocity.y + player.height < canvas.height
   ) {
     player.velocity.y = 5;
+    player.spriteState('back');
   }
 }
 
