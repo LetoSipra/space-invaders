@@ -60,6 +60,13 @@ export class Ship {
       this.image.width * this.scale,
       (this.image.height / this.frames) * this.scale
     );
+    ctx.strokeStyle = 'red';
+    ctx.strokeRect(
+      this.position.x,
+      this.position.y,
+      this.image.width,
+      this.image.height
+    );
   }
   update() {
     this.draw();

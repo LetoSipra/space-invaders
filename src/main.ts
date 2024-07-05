@@ -9,8 +9,8 @@ canvas.height = 600;
 
 const player = new PlayerShip({
   position: {
-    x: 350,
-    y: 525,
+    x: 400,
+    y: 500,
   },
   velocity: {
     x: 0,
