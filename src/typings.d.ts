@@ -17,7 +17,7 @@ interface ShipConstructor extends PosVel {
 }
 
 interface LaserConstructor extends PosVel {
-  playerAmmo: string;
+  imageSrc: string;
 }
 interface ParallaxBackgroundConstructor {
   imageSrc: string;

@@ -59,16 +59,16 @@ function animate() {
   window.requestAnimationFrame(animate);
   playerMovement();
 
+  if (keys.space.pressed) {
+    player.attack();
+  }
+
   player.lasers.forEach((laser) => {
     laser.update();
     if (laser.position.y < 0) {
       player.lasers.splice(player.lasers.indexOf(laser), 1);
     }
   });
-
-  if (keys.space.pressed) {
-    player.attack();
-  }
 }
 
 const keys = {

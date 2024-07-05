@@ -27,20 +27,20 @@ export class Ship {
     scale,
   }: ShipConstructor) {
     this.position = position;
-    this.velocity = velocity!;
+    this.velocity = velocity;
     this.width = 60;
     this.height = 60;
     this.offset = offset;
     this.sprites = sprites;
     this.image = new Image();
     this.image.src = imageSrc!;
-    this.frames = frames!;
+    this.frames = frames;
     this.framesElapsed = 0;
     this.currentFrame = 0;
-    this.scale = scale!;
+    this.scale = scale;
     this.lasers = [];
     this.cooldownId = 0;
-    this.cooldownTime = 10;
+    this.cooldownTime = 0;
 
     for (const sprite in this.sprites) {
       sprites[sprite].image = new Image();
@@ -57,8 +57,8 @@ export class Ship {
       this.image.height / this.frames,
       this.position.x - this.offset.x,
       this.position.y - this.offset.y,
-      this.image.width * this.scale!,
-      (this.image.height / this.frames) * this.scale!
+      this.image.width * this.scale,
+      (this.image.height / this.frames) * this.scale
     );
   }
   update() {

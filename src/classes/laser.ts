@@ -5,17 +5,15 @@ export class Laser {
   velocity: Coordinates;
   width: number;
   height: number;
-  playerAmmo: string;
   image: HTMLImageElement;
 
-  constructor({ position, velocity, playerAmmo }: LaserConstructor) {
+  constructor({ position, velocity, imageSrc }: LaserConstructor) {
     this.position = position;
     this.velocity = velocity;
     this.width = 10;
     this.height = 20;
-    this.playerAmmo = playerAmmo;
     this.image = new Image();
-    this.image.src = this.playerAmmo;
+    this.image.src = imageSrc;
   }
   draw() {
     ctx.drawImage(

@@ -23,28 +23,28 @@ export class PlayerShip extends Ship {
   }
 
   cooldown() {
-    if (this.cooldownId > 0) {
-      this.cooldownTime = setTimeout(this.cooldown.bind(this), 100);
-      this.cooldownId -= 0.5;
+    if (this.cooldownTime > 0) {
+      this.cooldownId = setTimeout(this.cooldown.bind(this), 100);
+      this.cooldownTime -= 0.45;
     }
   }
 
   attack() {
-    if (this.cooldownId <= 0) {
-      clearTimeout(this.cooldownTime);
-      this.cooldownId = 1;
+    if (this.cooldownTime <= 0) {
+      clearTimeout(this.cooldownId);
+      this.cooldownTime = 0.9;
       this.cooldown();
       this.lasers.push(
         new Laser({
           position: {
             x: this.position.x - this.width / 7,
-            y: this.position.y - this.height,
+            y: this.position.y - this.height - 10,
           },
           velocity: {
             x: 0,
             y: -10,
           },
-          playerAmmo: '../assets/Fighter/playerAmmo.png',
+          imageSrc: '../assets/Fighter/Charge_2.png',
         })
       );
     }
