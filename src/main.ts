@@ -39,8 +39,6 @@ const player = new Ship({
     x: 100,
     y: 100,
   },
-  scale: 1,
-  framesMax: 1,
   sprites: {
     idle: {
       imageSrc: '../assets/Fighter/idle.png',
@@ -58,15 +56,15 @@ const player = new Ship({
       imageSrc: '../assets/Fighter/boost.png',
       frames: 5,
     },
-    back: {
-      imageSrc: '../assets/Fighter/back.png',
-      frames: 1,
+    evasion: {
+      imageSrc: '../assets/Fighter/evasion.png',
+      frames: 8,
     },
   },
 });
 
 const background = new Parallax({
-  imageSrc: '../assets/bg.png',
+  imageSource: '../assets/bg.png',
   speed: 1,
 });
 
@@ -107,7 +105,6 @@ function animate() {
     player.position.y + player.velocity.y + player.height < canvas.height
   ) {
     player.velocity.y = 5;
-    player.spriteState('back');
   }
 }
 
