@@ -7,7 +7,6 @@ export class PlayerShip extends Ship {
     velocity,
     sprites,
     imageSrc,
-    offset = { x: 0, y: 0 },
     frames,
     scale,
   }: PlayerShipConstructor) {
@@ -16,7 +15,6 @@ export class PlayerShip extends Ship {
       velocity,
       sprites,
       imageSrc,
-      offset,
       frames,
       scale,
     });
@@ -44,8 +42,8 @@ export class PlayerShip extends Ship {
       this.lasers.push(
         new Laser({
           position: {
-            x: this.position.x - this.width / 7,
-            y: this.position.y - this.height - 10,
+            x: this.position.x + this.width + 31,
+            y: this.position.y + this.height,
           },
           velocity: {
             x: 0,

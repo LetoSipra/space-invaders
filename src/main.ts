@@ -10,8 +10,8 @@ canvas.width = 800;
 
 const player = new PlayerShip({
   position: {
-    x: 400,
-    y: 500,
+    x: 300,
+    y: 400,
   },
   velocity: {
     x: 0,
@@ -19,10 +19,6 @@ const player = new PlayerShip({
   },
   imageSrc: '../assets/Fighter/Idle.png',
   frames: 6,
-  offset: {
-    x: 100,
-    y: 100,
-  },
   scale: 1,
   sprites: {
     idle: {
@@ -59,13 +55,11 @@ const enemy = new Enemy({
   },
   imageSrc: '../assets/Bomber/Move.png',
   frames: 6,
-  offset: {
-    x: 0,
-    y: 0,
-  },
   scale: 0,
   sprites: {},
 });
+
+enemy.enemySpawn();
 
 const background = new ParallaxBackground({
   imageSrc: '../assets/bg.png',
@@ -79,8 +73,9 @@ function animate() {
   player.movementMechanics();
   window.requestAnimationFrame(animate);
   playerMovementAttack();
-  laserUpdateClean();
   enemyUpdateClean();
+  laserUpdateClean();
+  collisionDetection();
 }
 function laserUpdateClean() {
   player.lasers.forEach((laser) => {
@@ -95,10 +90,77 @@ function enemyUpdateClean() {
   enemy.enemies.forEach((enemyShip) => {
     enemyShip.update();
     enemyShip.movementMechanics();
+
     if (enemyShip.position.y > 700) {
       enemy.enemies.splice(enemy.enemies.indexOf(enemyShip), 1);
     }
   });
+}
+
+function collisionDetection() {
+  enemy.enemies.forEach((enemyShip: Enemy) => {
+    if (
+      player.position.x + 70 + player.image.width - 140 >=
+        enemyShip.position.x + 70 &&
+      player.position.x + 70 <=
+        enemyShip.position.x + 70 + enemyShip.image.width - 140 &&
+      player.position.y + 50 + player.image.height / player.frames - 100 >=
+        enemyShip.position.y + 50 &&
+      player.position.y + 50 <=
+        enemyShip.position.y + 50 + enemyShip.image.height / enemy.frames - 100
+    ) {
+      enemy.enemies.splice(enemy.enemies.indexOf(enemyShip), 1);
+    }
+    player.lasers.forEach((laser) => {
+      if (
+        laser.position.x + laser.width >= enemyShip.position.x + 70 &&
+        laser.position.x <=
+          enemyShip.position.x + 70 + enemyShip.image.width - 140 &&
+        laser.position.y + laser.height >= enemyShip.position.y + 50 &&
+        laser.position.y <=
+          enemyShip.position.y +
+            50 +
+            enemyShip.image.height / enemyShip.frames -
+            100
+      ) {
+        enemy.enemies.splice(enemy.enemies.indexOf(enemyShip), 1);
+        player.lasers.splice(player.lasers.indexOf(laser), 1);
+      }
+    });
+  });
+}
+
+function playerMovementAttack() {
+  console.log(player.position);
+  if (keys.a.pressed && player.position.x + 70 > 0) {
+    player.velocity.x = -5;
+    player.spriteState('turnLeft');
+  } else if (
+    keys.d.pressed &&
+    player.position.x + player.velocity.x - 70 + player.image.width <
+      canvas.width
+  ) {
+    player.velocity.x = 5;
+    player.spriteState('turnRight');
+  } else player.spriteState('idle');
+
+  if (keys.w.pressed && player.position.y - player.velocity.y > 0) {
+    player.velocity.y = -5;
+    player.spriteState('boost');
+  } else if (
+    keys.s.pressed &&
+    player.position.y +
+      player.velocity.y -
+      50 +
+      player.image.height / player.frames <
+      canvas.height
+  ) {
+    player.velocity.y = 5;
+    player.spriteState('back');
+  }
+  if (keys.space.pressed) {
+    player.attack();
+  }
 }
 
 const keys = {
@@ -118,34 +180,6 @@ const keys = {
     pressed: false,
   },
 };
-
-function playerMovementAttack() {
-  if (keys.a.pressed && player.position.x - player.velocity.x > 0) {
-    player.velocity.x = -5;
-    player.spriteState('turnLeft');
-  } else if (
-    keys.d.pressed &&
-    player.position.x + player.velocity.x + player.width < canvas.width
-  ) {
-    player.velocity.x = 5;
-    player.spriteState('turnRight');
-  } else player.spriteState('idle');
-
-  if (keys.w.pressed && player.position.y - player.velocity.y > 0) {
-    player.velocity.y = -5;
-    player.spriteState('boost');
-  } else if (
-    keys.s.pressed &&
-    player.position.y + player.velocity.y + player.height < canvas.height
-  ) {
-    player.velocity.y = 5;
-    player.spriteState('back');
-  }
-  if (keys.space.pressed) {
-    player.attack();
-  }
-}
-
 window.addEventListener('keydown', (e) => {
   switch (e.key) {
     case 'd':
@@ -187,4 +221,3 @@ window.addEventListener('keyup', (e) => {
 });
 
 animate();
-enemy.enemySpawn();

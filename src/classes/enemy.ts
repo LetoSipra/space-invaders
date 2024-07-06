@@ -8,11 +8,10 @@ export class Enemy extends Ship {
     velocity,
     sprites,
     imageSrc,
-    offset = { x: 0, y: 0 },
     frames,
     scale,
   }: EnemyShipConstructor) {
-    super({ position, velocity, sprites, imageSrc, offset, frames, scale });
+    super({ position, velocity, sprites, imageSrc, frames, scale });
     this.enemies = [];
   }
   movementMechanics() {
@@ -31,7 +30,7 @@ export class Enemy extends Ship {
   enemySpawn() {
     if (this.cooldownTime > 0) {
       this.cooldownId = setTimeout(this.enemySpawn.bind(this), 100);
-      this.cooldownTime -= 0.1;
+      this.cooldownTime -= 0.05;
     } else if (this.cooldownTime <= 0) {
       clearTimeout(this.cooldownId);
       this.cooldownTime = 0.9;
@@ -48,10 +47,6 @@ export class Enemy extends Ship {
           },
           imageSrc: '../assets/Bomber/Move.png',
           frames: 6,
-          offset: {
-            x: 100,
-            y: 100,
-          },
           scale: 1,
           sprites: {},
         })

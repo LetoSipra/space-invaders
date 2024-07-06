@@ -6,7 +6,6 @@ export class Ship {
   velocity: Coordinates;
   width: number;
   height: number;
-  offset: Coordinates;
   sprites: any;
   image: HTMLImageElement;
   frames: number;
@@ -22,7 +21,6 @@ export class Ship {
     velocity,
     sprites,
     imageSrc,
-    offset = { x: 0, y: 0 },
     frames,
     scale,
   }: ShipConstructor) {
@@ -30,7 +28,6 @@ export class Ship {
     this.velocity = velocity;
     this.width = 60;
     this.height = 60;
-    this.offset = offset;
     this.sprites = sprites;
     this.image = new Image();
     this.image.src = imageSrc!;
@@ -55,18 +52,18 @@ export class Ship {
       this.currentFrame * (this.image.height / this.frames),
       this.image.width,
       this.image.height / this.frames,
-      this.position.x - this.offset.x,
-      this.position.y - this.offset.y,
+      this.position.x,
+      this.position.y,
       this.image.width * this.scale,
       (this.image.height / this.frames) * this.scale
     );
-    /*  ctx.strokeStyle = 'red';
+    ctx.strokeStyle = 'blue';
     ctx.strokeRect(
-      this.position.x,
-      this.position.y,
-      this.image.width,
-      this.image.height
-    ); */
+      this.position.x + 70,
+      this.position.y + 50,
+      this.image.width - 140,
+      this.image.height / this.frames - 100
+    );
   }
   update() {
     this.draw();

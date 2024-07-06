@@ -11,7 +11,6 @@ type PosVel = {
 interface ShipConstructor extends PosVel {
   sprites: any;
   imageSrc: string;
-  offset: coordinates;
   frames: number;
   scale: number;
 }
