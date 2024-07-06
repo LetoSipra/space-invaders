@@ -25,3 +25,4 @@ interface ParallaxBackgroundConstructor {
 }
 
 interface PlayerShipConstructor extends ShipConstructor {}
+interface EnemyShipConstructor extends ShipConstructor {}

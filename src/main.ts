@@ -1,11 +1,12 @@
+import { Enemy } from './classes/enemy';
 import { ParallaxBackground } from './classes/parallaxBackground';
 import { PlayerShip } from './classes/player';
 
 export const canvas = <HTMLCanvasElement>document.querySelector('canvas');
 export const ctx = <CanvasRenderingContext2D>canvas.getContext('2d');
 
-canvas.width = 800;
 canvas.height = 600;
+canvas.width = 800;
 
 const player = new PlayerShip({
   position: {
@@ -25,26 +26,45 @@ const player = new PlayerShip({
   scale: 1,
   sprites: {
     idle: {
-      imageSrc: '../assets/Fighter/idle.png',
+      imageSrc: '../assets/Fighter/Idle.png',
       frames: 6,
     },
     turnLeft: {
-      imageSrc: '../assets/Fighter/turnLeft.png',
+      imageSrc: '../assets/Fighter/TurnLeft.png',
       frames: 1,
     },
     turnRight: {
-      imageSrc: '../assets/Fighter/turnRight.png',
+      imageSrc: '../assets/Fighter/TurnRight.png',
       frames: 1,
     },
     boost: {
-      imageSrc: '../assets/Fighter/boost.png',
+      imageSrc: '../assets/Fighter/Boost.png',
       frames: 5,
     },
     back: {
-      imageSrc: '../assets/Fighter/back.png',
+      imageSrc: '../assets/Fighter/Back.png',
       frames: 1,
     },
   },
+});
+
+const enemy = new Enemy({
+  position: {
+    x: 0,
+    y: 0,
+  },
+  velocity: {
+    x: 0,
+    y: 0,
+  },
+  imageSrc: '../assets/Bomber/Move.png',
+  frames: 6,
+  offset: {
+    x: 0,
+    y: 0,
+  },
+  scale: 0,
+  sprites: {},
 });
 
 const background = new ParallaxBackground({
@@ -56,17 +76,27 @@ function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   background.update();
   player.update();
+  player.movementMechanics();
   window.requestAnimationFrame(animate);
-  playerMovement();
-
-  if (keys.space.pressed) {
-    player.attack();
-  }
-
+  playerMovementAttack();
+  laserUpdateClean();
+  enemyUpdateClean();
+}
+function laserUpdateClean() {
   player.lasers.forEach((laser) => {
     laser.update();
     if (laser.position.y < 0) {
       player.lasers.splice(player.lasers.indexOf(laser), 1);
+    }
+  });
+}
+
+function enemyUpdateClean() {
+  enemy.enemies.forEach((enemyShip) => {
+    enemyShip.update();
+    enemyShip.movementMechanics();
+    if (enemyShip.position.y > 700) {
+      enemy.enemies.splice(enemy.enemies.indexOf(enemyShip), 1);
     }
   });
 }
@@ -89,7 +119,7 @@ const keys = {
   },
 };
 
-function playerMovement() {
+function playerMovementAttack() {
   if (keys.a.pressed && player.position.x - player.velocity.x > 0) {
     player.velocity.x = -5;
     player.spriteState('turnLeft');
@@ -110,6 +140,9 @@ function playerMovement() {
   ) {
     player.velocity.y = 5;
     player.spriteState('back');
+  }
+  if (keys.space.pressed) {
+    player.attack();
   }
 }
 
@@ -154,3 +187,4 @@ window.addEventListener('keyup', (e) => {
 });
 
 animate();
+enemy.enemySpawn();

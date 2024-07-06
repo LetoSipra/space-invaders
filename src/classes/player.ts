@@ -22,6 +22,13 @@ export class PlayerShip extends Ship {
     });
   }
 
+  movementMechanics() {
+    this.position.x += this.velocity.x;
+    this.position.y += this.velocity.y;
+    this.velocity.x = 0;
+    this.velocity.y = 0;
+  }
+
   cooldown() {
     if (this.cooldownTime > 0) {
       this.cooldownId = setTimeout(this.cooldown.bind(this), 100);
@@ -44,7 +51,7 @@ export class PlayerShip extends Ship {
             x: 0,
             y: -10,
           },
-          imageSrc: '../assets/Fighter/Charge_2.png',
+          imageSrc: '../assets/Fighter/PlayerAmmo_2.png',
         })
       );
     }

@@ -60,22 +60,17 @@ export class Ship {
       this.image.width * this.scale,
       (this.image.height / this.frames) * this.scale
     );
-    ctx.strokeStyle = 'red';
+    /*  ctx.strokeStyle = 'red';
     ctx.strokeRect(
       this.position.x,
       this.position.y,
       this.image.width,
       this.image.height
-    );
+    ); */
   }
   update() {
     this.draw();
     this.animateFrames();
-    this.position.x += this.velocity.x;
-    this.position.y += this.velocity.y;
-
-    this.velocity.x = 0;
-    this.velocity.y = 0;
   }
 
   animateFrames() {
