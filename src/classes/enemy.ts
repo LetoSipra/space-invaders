@@ -19,6 +19,7 @@ export class Enemy extends Ship {
     this.laserCooldownId = 0;
     this.laserCooldownTime = 0;
   }
+
   movementMechanics() {
     this.position.x += this.velocity.x;
     this.position.y += this.velocity.y;
@@ -28,7 +29,7 @@ export class Enemy extends Ship {
     if (this.enemies.length > 0) {
       if (this.laserCooldownTime > 0) {
         this.laserCooldownId = setTimeout(this.enemyAttack.bind(this), 100);
-        this.laserCooldownTime -= 0.3;
+        this.laserCooldownTime -= 0.9;
       } else if (this.laserCooldownTime <= 0) {
         clearTimeout(this.laserCooldownId);
         this.laserCooldownTime = 0.9;
@@ -45,7 +46,7 @@ export class Enemy extends Ship {
               x: 0,
               y: 10,
             },
-            imageSrc: '../assets/Fighter/PlayerAmmo_2.png',
+            imageSrc: '../assets/Bomber/Charge_1.png',
           })
         );
         this.enemyAttack();
@@ -56,7 +57,7 @@ export class Enemy extends Ship {
   enemySpawn() {
     if (this.cooldownTime > 0) {
       this.cooldownId = setTimeout(this.enemySpawn.bind(this), 100);
-      this.cooldownTime -= 0.1;
+      this.cooldownTime -= 0.3;
     } else if (this.cooldownTime <= 0) {
       clearTimeout(this.cooldownId);
       this.cooldownTime = 0.9;

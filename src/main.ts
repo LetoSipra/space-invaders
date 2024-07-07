@@ -107,7 +107,8 @@ function enemyUpdateClean() {
 }
 
 function collisionDetection() {
-  enemy.enemies.forEach((enemyShip: Enemy) => {
+  // Check collision between enemyShip and playerShip
+  enemy.enemies.forEach((enemyShip: Enemy, index) => {
     if (
       player.position.x + 70 + player.image.width - 140 >=
         enemyShip.position.x + 70 &&
@@ -120,6 +121,7 @@ function collisionDetection() {
     ) {
       enemy.enemies.splice(enemy.enemies.indexOf(enemyShip), 1);
     }
+    // Check collision between enemyShip and playerLaser
     player.lasers.forEach((playerLaser) => {
       if (
         playerLaser.position.x + playerLaser.width >=
@@ -137,6 +139,7 @@ function collisionDetection() {
         enemy.enemies.splice(enemy.enemies.indexOf(enemyShip), 1);
         player.lasers.splice(player.lasers.indexOf(playerLaser), 1);
       }
+      // Check collision between enemyLaser and playerLaser
       enemyShip.lasers.forEach((enemyLaser: Laser) => {
         if (
           enemyLaser.position.x + enemyLaser.width >= playerLaser.position.x &&
@@ -149,6 +152,7 @@ function collisionDetection() {
         }
       });
     });
+    // Check collision between enemyLaser and playerShip
     enemyShip.lasers.forEach((enemyLaser) => {
       if (
         enemyLaser.position.x + enemyLaser.width >= player.position.x + 70 &&
@@ -161,6 +165,46 @@ function collisionDetection() {
         enemyShip.lasers.splice(enemyShip.lasers.indexOf(enemyLaser), 1);
       }
     });
+    // Check collision between overlapping enemy & create another enemy
+    for (let i = index + 1; i < enemy.enemies.length; i++) {
+      let enemyShip_2 = enemy.enemies[i];
+
+      if (
+        enemyShip.position.x + 70 + enemyShip.image.width - 140 >=
+          enemyShip_2.position.x + 70 &&
+        enemyShip.position.x + 70 <=
+          enemyShip_2.position.x + 70 + enemyShip_2.image.width - 140 &&
+        enemyShip.position.y +
+          50 +
+          enemyShip.image.height / enemyShip.frames -
+          100 >=
+          enemyShip_2.position.y + 50 &&
+        enemyShip.position.y + 50 <=
+          enemyShip_2.position.y +
+            50 +
+            enemyShip_2.image.height / enemy.frames -
+            100
+      ) {
+        enemy.enemies.splice(i, 1);
+        enemy.enemies.push(
+          new Enemy({
+            position: {
+              x: Math.floor(Math.random() * (750 + 1)) - 70,
+              y: -200,
+            },
+            velocity: {
+              x: 0,
+              y: 2,
+            },
+            imageSrc: '../assets/Bomber/Move.png',
+            frames: 6,
+            scale: 1,
+            sprites: {},
+          })
+        );
+        break;
+      }
+    }
   });
 }
 

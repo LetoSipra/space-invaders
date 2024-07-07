@@ -4,9 +4,38 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Test</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        font-family: 'Press Start 2P', cursive;
+      }
+    </style>
   </head>
-  <body>
-    <canvas></canvas>
+  <body style="background-color: black">
+    <div style="position: relative">
+      <div
+        style="
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 90vh;
+        "
+      >
+        <div style="position: absolute">
+          <div style="background-color: wheat; height: 50px; width: 100%">
+            <div>
+              <p>Health</p>
+              <p>Level</p>
+            </div>
+          </div>
+          <canvas></canvas>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
