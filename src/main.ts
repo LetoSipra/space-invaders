@@ -1,4 +1,5 @@
 import { Enemy } from './classes/enemy';
+import { Laser } from './classes/laser';
 import { ParallaxBackground } from './classes/parallaxBackground';
 import { PlayerShip } from './classes/player';
 
@@ -60,6 +61,7 @@ const enemy = new Enemy({
 });
 
 enemy.enemySpawn();
+enemy.enemyAttack();
 
 const background = new ParallaxBackground({
   imageSrc: '../assets/bg.png',
@@ -84,13 +86,20 @@ function laserUpdateClean() {
       player.lasers.splice(player.lasers.indexOf(laser), 1);
     }
   });
+  enemy.enemies.forEach((enemyShip) => {
+    enemyShip.lasers.forEach((laser) => {
+      laser.update();
+      if (laser.position.y > 700) {
+        enemyShip.lasers.splice(enemyShip.lasers.indexOf(laser), 1);
+      }
+    });
+  });
 }
 
 function enemyUpdateClean() {
   enemy.enemies.forEach((enemyShip) => {
     enemyShip.update();
     enemyShip.movementMechanics();
-
     if (enemyShip.position.y > 700) {
       enemy.enemies.splice(enemy.enemies.indexOf(enemyShip), 1);
     }
@@ -111,27 +120,51 @@ function collisionDetection() {
     ) {
       enemy.enemies.splice(enemy.enemies.indexOf(enemyShip), 1);
     }
-    player.lasers.forEach((laser) => {
+    player.lasers.forEach((playerLaser) => {
       if (
-        laser.position.x + laser.width >= enemyShip.position.x + 70 &&
-        laser.position.x <=
+        playerLaser.position.x + playerLaser.width >=
+          enemyShip.position.x + 70 &&
+        playerLaser.position.x <=
           enemyShip.position.x + 70 + enemyShip.image.width - 140 &&
-        laser.position.y + laser.height >= enemyShip.position.y + 50 &&
-        laser.position.y <=
+        playerLaser.position.y + playerLaser.height >=
+          enemyShip.position.y + 50 &&
+        playerLaser.position.y <=
           enemyShip.position.y +
             50 +
             enemyShip.image.height / enemyShip.frames -
             100
       ) {
         enemy.enemies.splice(enemy.enemies.indexOf(enemyShip), 1);
-        player.lasers.splice(player.lasers.indexOf(laser), 1);
+        player.lasers.splice(player.lasers.indexOf(playerLaser), 1);
+      }
+      enemyShip.lasers.forEach((enemyLaser: Laser) => {
+        if (
+          enemyLaser.position.x + enemyLaser.width >= playerLaser.position.x &&
+          enemyLaser.position.x <= playerLaser.position.x + playerLaser.width &&
+          enemyLaser.position.y + enemyLaser.height >= playerLaser.position.y &&
+          enemyLaser.position.y <= playerLaser.position.y + playerLaser.height
+        ) {
+          player.lasers.splice(player.lasers.indexOf(playerLaser), 1);
+          enemyShip.lasers.splice(enemyShip.lasers.indexOf(enemyLaser), 1);
+        }
+      });
+    });
+    enemyShip.lasers.forEach((enemyLaser) => {
+      if (
+        enemyLaser.position.x + enemyLaser.width >= player.position.x + 70 &&
+        enemyLaser.position.x <=
+          player.position.x + 70 + player.image.width - 140 &&
+        enemyLaser.position.y + enemyLaser.height >= player.position.y + 50 &&
+        enemyLaser.position.y <=
+          player.position.y + 50 + player.image.height / player.frames - 100
+      ) {
+        enemyShip.lasers.splice(enemyShip.lasers.indexOf(enemyLaser), 1);
       }
     });
   });
 }
 
 function playerMovementAttack() {
-  console.log(player.position);
   if (keys.a.pressed && player.position.x + 70 > 0) {
     player.velocity.x = -5;
     player.spriteState('turnLeft');

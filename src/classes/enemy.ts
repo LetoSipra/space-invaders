@@ -1,8 +1,11 @@
-import { canvas } from '../main';
+import { Laser } from './laser';
 import { Ship } from './ship';
 
 export class Enemy extends Ship {
   enemies: Enemy[];
+  laserCooldownId: number;
+  laserCooldownTime: number;
+
   constructor({
     position,
     velocity,
@@ -13,24 +16,47 @@ export class Enemy extends Ship {
   }: EnemyShipConstructor) {
     super({ position, velocity, sprites, imageSrc, frames, scale });
     this.enemies = [];
+    this.laserCooldownId = 0;
+    this.laserCooldownTime = 0;
   }
   movementMechanics() {
     this.position.x += this.velocity.x;
     this.position.y += this.velocity.y;
   }
 
-  getRandomInteger() {
-    let x = Math.floor(Math.random() * canvas.width);
-    while (x < 25 || x > 775) {
-      x = Math.floor(Math.random() * canvas.width);
+  enemyAttack() {
+    if (this.enemies.length > 0) {
+      if (this.laserCooldownTime > 0) {
+        this.laserCooldownId = setTimeout(this.enemyAttack.bind(this), 100);
+        this.laserCooldownTime -= 0.3;
+      } else if (this.laserCooldownTime <= 0) {
+        clearTimeout(this.laserCooldownId);
+        this.laserCooldownTime = 0.9;
+        let randomIndex = Math.floor(Math.random() * this.enemies.length);
+        let randomEnemyShip = this.enemies[randomIndex];
+
+        randomEnemyShip.lasers.push(
+          new Laser({
+            position: {
+              x: randomEnemyShip.position.x + randomEnemyShip.width + 31,
+              y: randomEnemyShip.position.y + randomEnemyShip.height + 80,
+            },
+            velocity: {
+              x: 0,
+              y: 10,
+            },
+            imageSrc: '../assets/Fighter/PlayerAmmo_2.png',
+          })
+        );
+        this.enemyAttack();
+      }
     }
-    return x;
   }
 
   enemySpawn() {
     if (this.cooldownTime > 0) {
       this.cooldownId = setTimeout(this.enemySpawn.bind(this), 100);
-      this.cooldownTime -= 0.05;
+      this.cooldownTime -= 0.1;
     } else if (this.cooldownTime <= 0) {
       clearTimeout(this.cooldownId);
       this.cooldownTime = 0.9;
@@ -38,8 +64,8 @@ export class Enemy extends Ship {
       this.enemies.push(
         new Enemy({
           position: {
-            x: this.getRandomInteger(),
-            y: 50,
+            x: Math.floor(Math.random() * (750 + 1)) - 70,
+            y: -200,
           },
           velocity: {
             x: 0,
