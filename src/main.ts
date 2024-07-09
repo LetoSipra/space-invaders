@@ -43,6 +43,7 @@ const player = new PlayerShip({
       frames: 1,
     },
   },
+  health: 100,
 });
 
 const enemy = new Enemy({
@@ -58,6 +59,7 @@ const enemy = new Enemy({
   frames: 6,
   scale: 0,
   sprites: {},
+  health: 100,
 });
 
 enemy.enemySpawn();
@@ -78,6 +80,7 @@ function animate() {
   enemyUpdateClean();
   laserUpdateClean();
   collisionDetection();
+  document.getElementById('health')!.innerHTML = 'Health:' + player.health;
 }
 function laserUpdateClean() {
   player.lasers.forEach((laser) => {
@@ -120,6 +123,9 @@ function collisionDetection() {
         enemyShip.position.y + 50 + enemyShip.image.height / enemy.frames - 100
     ) {
       enemy.enemies.splice(enemy.enemies.indexOf(enemyShip), 1);
+      if (player.health > 0) {
+        player.health -= 10;
+      }
     }
     // Check collision between enemyShip and playerLaser
     player.lasers.forEach((playerLaser) => {
@@ -163,6 +169,9 @@ function collisionDetection() {
           player.position.y + 50 + player.image.height / player.frames - 100
       ) {
         enemyShip.lasers.splice(enemyShip.lasers.indexOf(enemyLaser), 1);
+        if (player.health > 0) {
+          player.health -= 10;
+        }
       }
     });
     // Check collision between overlapping enemy & create another enemy
@@ -200,6 +209,7 @@ function collisionDetection() {
             frames: 6,
             scale: 1,
             sprites: {},
+            health: 100,
           })
         );
         break;
@@ -296,5 +306,9 @@ window.addEventListener('keyup', (e) => {
       break;
   }
 });
+
+function menu() {
+  //menu screen
+}
 
 animate();

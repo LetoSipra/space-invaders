@@ -9,6 +9,7 @@ export class PlayerShip extends Ship {
     imageSrc,
     frames,
     scale,
+    health,
   }: PlayerShipConstructor) {
     super({
       position,
@@ -17,6 +18,7 @@ export class PlayerShip extends Ship {
       imageSrc,
       frames,
       scale,
+      health,
     });
   }
 

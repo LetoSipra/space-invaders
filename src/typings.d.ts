@@ -13,6 +13,7 @@ interface ShipConstructor extends PosVel {
   imageSrc: string;
   frames: number;
   scale: number;
+  health: number;
 }
 
 interface LaserConstructor extends PosVel {

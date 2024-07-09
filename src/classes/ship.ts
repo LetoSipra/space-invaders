@@ -15,6 +15,7 @@ export class Ship {
   lasers: Laser[];
   cooldownId: number;
   cooldownTime: number;
+  health: number;
 
   constructor({
     position,
@@ -23,6 +24,7 @@ export class Ship {
     imageSrc,
     frames,
     scale,
+    health,
   }: ShipConstructor) {
     this.position = position;
     this.velocity = velocity;
@@ -38,6 +40,7 @@ export class Ship {
     this.lasers = [];
     this.cooldownId = 0;
     this.cooldownTime = 0;
+    this.health = health;
 
     for (const sprite in this.sprites) {
       sprites[sprite].image = new Image();
