@@ -42,6 +42,14 @@ const player = new PlayerShip({
       imageSrc: '../assets/Fighter/Back.png',
       frames: 1,
     },
+    damage: {
+      imageSrc: '../assets/Fighter/Damage.png',
+      frames: 9,
+    },
+    destroyed: {
+      imageSrc: '../assets/Fighter/Destroyed.png',
+      frames: 15,
+    },
   },
   health: 100,
 });
@@ -55,10 +63,15 @@ const enemy = new Enemy({
     x: 0,
     y: 0,
   },
-  imageSrc: '../assets/Bomber/Move.png',
+  imageSrc: '../assets/Bomber/Idle.png',
   frames: 6,
   scale: 0,
-  sprites: {},
+  sprites: {
+    destroyed: {
+      imageSrc: '../assets/Bomber/Destroyed.png',
+      frames: 10,
+    },
+  },
   health: 100,
 });
 
@@ -81,6 +94,9 @@ function animate() {
   laserUpdateClean();
   collisionDetection();
   document.getElementById('health')!.innerHTML = 'Health:' + player.health;
+  if (player.health === 0) {
+    player.spriteState('destroyed');
+  }
 }
 function laserUpdateClean() {
   player.lasers.forEach((laser) => {
@@ -120,11 +136,23 @@ function collisionDetection() {
       player.position.y + 50 + player.image.height / player.frames - 100 >=
         enemyShip.position.y + 50 &&
       player.position.y + 50 <=
-        enemyShip.position.y + 50 + enemyShip.image.height / enemy.frames - 100
+        enemyShip.position.y +
+          50 +
+          enemyShip.image.height / enemy.frames -
+          100 &&
+      !enemyShip.isDead
     ) {
-      enemy.enemies.splice(enemy.enemies.indexOf(enemyShip), 1);
+      enemyShip.spriteState('destroyed');
+      setTimeout(function () {
+        const index = enemy.enemies.indexOf(enemyShip);
+        if (index > -1) {
+          enemy.enemies.splice(index, 1);
+        }
+      }, 500);
+
       if (player.health > 0) {
         player.health -= 10;
+        player.spriteState('damage');
       }
     }
     // Check collision between enemyShip and playerLaser
@@ -140,9 +168,16 @@ function collisionDetection() {
           enemyShip.position.y +
             50 +
             enemyShip.image.height / enemyShip.frames -
-            100
+            100 &&
+        !enemyShip.isDead
       ) {
-        enemy.enemies.splice(enemy.enemies.indexOf(enemyShip), 1);
+        enemyShip.spriteState('destroyed');
+        setTimeout(function () {
+          const index = enemy.enemies.indexOf(enemyShip);
+          if (index > -1) {
+            enemy.enemies.splice(index, 1);
+          }
+        }, 500);
         player.lasers.splice(player.lasers.indexOf(playerLaser), 1);
       }
       // Check collision between enemyLaser and playerLaser
@@ -171,6 +206,7 @@ function collisionDetection() {
         enemyShip.lasers.splice(enemyShip.lasers.indexOf(enemyLaser), 1);
         if (player.health > 0) {
           player.health -= 10;
+          player.spriteState('damage');
         }
       }
     });
@@ -203,12 +239,17 @@ function collisionDetection() {
             },
             velocity: {
               x: 0,
-              y: 2,
+              y: enemy.speed,
             },
-            imageSrc: '../assets/Bomber/Move.png',
+            imageSrc: '../assets/Bomber/Idle.png',
             frames: 6,
             scale: 1,
-            sprites: {},
+            sprites: {
+              destroyed: {
+                imageSrc: '../assets/Bomber/Destroyed.png',
+                frames: 10,
+              },
+            },
             health: 100,
           })
         );
@@ -220,19 +261,19 @@ function collisionDetection() {
 
 function playerMovementAttack() {
   if (keys.a.pressed && player.position.x + 70 > 0) {
-    player.velocity.x = -5;
+    player.velocity.x = -6;
     player.spriteState('turnLeft');
   } else if (
     keys.d.pressed &&
     player.position.x + player.velocity.x - 70 + player.image.width <
       canvas.width
   ) {
-    player.velocity.x = 5;
+    player.velocity.x = 6;
     player.spriteState('turnRight');
   } else player.spriteState('idle');
 
   if (keys.w.pressed && player.position.y - player.velocity.y > 0) {
-    player.velocity.y = -5;
+    player.velocity.y = -6;
     player.spriteState('boost');
   } else if (
     keys.s.pressed &&
@@ -242,7 +283,7 @@ function playerMovementAttack() {
       player.image.height / player.frames <
       canvas.height
   ) {
-    player.velocity.y = 5;
+    player.velocity.y = 6;
     player.spriteState('back');
   }
   if (keys.space.pressed) {
@@ -309,6 +350,44 @@ window.addEventListener('keyup', (e) => {
 
 function menu() {
   //menu screen
+  ctx.fillStyle = 'wheat';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
+let level = 'Wave 1';
+let stageTimerId = 0;
+let stageTimer = 3;
+function stages() {
+  if (stageTimer > 0) {
+    stageTimerId = setTimeout(stages, 1000);
+    stageTimer -= 1;
+    document.getElementById('level')!.innerHTML =
+      'Level:' + level + '(' + stageTimer + ')';
+  } else if (stageTimer <= 0) {
+    clearTimeout(stageTimerId);
+    stageTimer = 3;
+    switch (level) {
+      case 'Wave 1':
+        level = 'Wave 2';
+        enemy.spawnSpeed = 0.3;
+        enemy.speed = 3;
+        stages();
+        break;
+      case 'Wave 2':
+        level = 'Wave 3';
+        enemy.spawnSpeed = 0.45;
+        enemy.speed = 5;
+        stages();
+        break;
+      case 'Wave 3':
+        level = 'Boss';
+        document.getElementById('level')!.innerHTML = 'Level:' + level;
+        /*  enemy.speed = 0.0; */
+        break;
+    }
+  }
+}
+
+document.getElementById('play')!.addEventListener('click', animate);
 animate();
+stages();

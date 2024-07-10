@@ -58,6 +58,17 @@ export class PlayerShip extends Ship {
   }
 
   spriteState(sprite: string) {
+    if (
+      this.image === this.sprites.destroyed.image &&
+      this.currentFrame < this.sprites.destroyed.frames - 1
+    )
+      return;
+    if (
+      this.image === this.sprites.damage.image &&
+      this.currentFrame < this.sprites.damage.frames - 1
+    )
+      return;
+
     switch (sprite) {
       case 'idle':
         if (this.image !== this.sprites.idle.image) {
@@ -91,6 +102,20 @@ export class PlayerShip extends Ship {
         if (this.image !== this.sprites.back.image) {
           this.image = this.sprites.back.image;
           this.frames = this.sprites.back.frames;
+          this.currentFrame = 0;
+        }
+        break;
+      case 'damage':
+        if (this.image !== this.sprites.damage.image) {
+          this.image = this.sprites.damage.image;
+          this.frames = this.sprites.damage.frames;
+          this.currentFrame = 0;
+        }
+        break;
+      case 'destroyed':
+        if (this.image !== this.sprites.destroyed.image) {
+          this.image = this.sprites.destroyed.image;
+          this.frames = this.sprites.destroyed.frames;
           this.currentFrame = 0;
         }
         break;

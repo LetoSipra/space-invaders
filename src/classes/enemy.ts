@@ -5,6 +5,9 @@ export class Enemy extends Ship {
   enemies: Enemy[];
   laserCooldownId: number;
   laserCooldownTime: number;
+  speed: number;
+  spawnSpeed: number;
+  isDead: boolean;
 
   constructor({
     position,
@@ -19,6 +22,9 @@ export class Enemy extends Ship {
     this.enemies = [];
     this.laserCooldownId = 0;
     this.laserCooldownTime = 0;
+    this.speed = 2;
+    this.spawnSpeed = 0.1;
+    this.isDead = false;
   }
 
   movementMechanics() {
@@ -30,7 +36,7 @@ export class Enemy extends Ship {
     if (this.enemies.length > 0) {
       if (this.laserCooldownTime > 0) {
         this.laserCooldownId = setTimeout(this.enemyAttack.bind(this), 100);
-        this.laserCooldownTime -= 0.9;
+        this.laserCooldownTime -= this.spawnSpeed;
       } else if (this.laserCooldownTime <= 0) {
         clearTimeout(this.laserCooldownId);
         this.laserCooldownTime = 0.9;
@@ -45,7 +51,7 @@ export class Enemy extends Ship {
             },
             velocity: {
               x: 0,
-              y: 10,
+              y: this.speed + 5,
             },
             imageSrc: '../assets/Bomber/Charge_1.png',
           })
@@ -58,7 +64,7 @@ export class Enemy extends Ship {
   enemySpawn() {
     if (this.cooldownTime > 0) {
       this.cooldownId = setTimeout(this.enemySpawn.bind(this), 100);
-      this.cooldownTime -= 0.3;
+      this.cooldownTime -= this.spawnSpeed;
     } else if (this.cooldownTime <= 0) {
       clearTimeout(this.cooldownId);
       this.cooldownTime = 0.9;
@@ -71,15 +77,32 @@ export class Enemy extends Ship {
           },
           velocity: {
             x: 0,
-            y: 2,
+            y: this.speed,
           },
-          imageSrc: '../assets/Bomber/Move.png',
+          imageSrc: '../assets/Bomber/Idle.png',
           frames: 6,
           scale: 1,
-          sprites: {},
+          sprites: {
+            destroyed: {
+              imageSrc: '../assets/Bomber/Destroyed.png',
+              frames: 10,
+            },
+          },
           health: 100,
         })
       );
+    }
+  }
+  spriteState(sprite: string) {
+    switch (sprite) {
+      case 'destroyed':
+        if (this.image !== this.sprites.destroyed.image) {
+          this.image = this.sprites.destroyed.image;
+          this.frames = this.sprites.destroyed.frames;
+          this.currentFrame = 0;
+          this.isDead = true;
+        }
+        break;
     }
   }
 }

@@ -23,13 +23,6 @@ export class Laser {
       this.width,
       this.height
     );
-    ctx.strokeStyle = 'red';
-    ctx.strokeRect(
-      this.position.x,
-      this.position.y,
-      this.image.width,
-      this.image.height
-    );
   }
 
   update() {
