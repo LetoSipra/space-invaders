@@ -83,14 +83,14 @@ const background = new ParallaxBackground({
   speed: 1,
 });
 
-function animate() {
+function main() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   background.update();
-  player.update();
   player.movementMechanics();
-  window.requestAnimationFrame(animate);
+  window.requestAnimationFrame(main);
   playerMovementAttack();
   enemyUpdateClean();
+  player.update();
   laserUpdateClean();
   collisionDetection();
   document.getElementById('health')!.innerHTML = 'Health:' + player.health;
@@ -352,6 +352,7 @@ function menu() {
   //menu screen
   ctx.fillStyle = 'wheat';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
+  document.getElementById('play')!.addEventListener('click', main);
 }
 
 let level = 'Wave 1';
@@ -388,6 +389,5 @@ function stages() {
   }
 }
 
-document.getElementById('play')!.addEventListener('click', animate);
-animate();
+main();
 stages();
