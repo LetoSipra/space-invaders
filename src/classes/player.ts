@@ -10,7 +10,7 @@ export class PlayerShip extends Ship {
     frames,
     scale,
     health,
-  }: PlayerShipConstructor) {
+  }: ShipConstructor) {
     super({
       position,
       velocity,

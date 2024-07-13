@@ -23,6 +23,3 @@ interface ParallaxBackgroundConstructor {
   imageSrc: string;
   speed: number;
 }
-
-interface PlayerShipConstructor extends ShipConstructor {}
-interface EnemyShipConstructor extends ShipConstructor {}

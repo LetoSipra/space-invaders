@@ -17,7 +17,7 @@ export class Enemy extends Ship {
     frames,
     scale,
     health,
-  }: EnemyShipConstructor) {
+  }: ShipConstructor) {
     super({ position, velocity, sprites, imageSrc, frames, scale, health });
     this.enemies = [];
     this.laserCooldownId = 0;
