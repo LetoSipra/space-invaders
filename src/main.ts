@@ -6,8 +6,8 @@ import { PlayerShip } from './classes/player';
 export const canvas = <HTMLCanvasElement>document.querySelector('canvas');
 export const ctx = <CanvasRenderingContext2D>canvas.getContext('2d');
 
-canvas.height = 600;
-canvas.width = 800;
+canvas.height = 800;
+canvas.width = 700;
 
 const player = new PlayerShip({
   position: {
