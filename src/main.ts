@@ -6,8 +6,8 @@ import { PlayerShip } from './classes/player';
 export const canvas = <HTMLCanvasElement>document.querySelector('canvas');
 export const ctx = <CanvasRenderingContext2D>canvas.getContext('2d');
 
-canvas.height = 800;
-canvas.width = 700;
+canvas.height = 600;
+canvas.width = 800;
 
 const player = new PlayerShip({
   position: {
@@ -18,7 +18,7 @@ const player = new PlayerShip({
     x: 0,
     y: 0,
   },
-  imageSrc: '../assets/Fighter/Idle.png',
+  imageSrc: '../assets/Fighter/Bases/Idle.png',
   frames: 6,
   scale: 1,
   sprites: {
@@ -86,9 +86,8 @@ const background = new ParallaxBackground({
 function main() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   background.update();
-  player.movementMechanics();
   window.requestAnimationFrame(main);
-  playerMovementAttack();
+  player.movementMechanics();
   enemyUpdateClean();
   player.update();
   laserUpdateClean();
@@ -96,8 +95,23 @@ function main() {
   document.getElementById('health')!.innerHTML = 'Health:' + player.health;
   if (player.health === 0) {
     player.spriteState('destroyed');
+    enemy.enemies = [];
+    enemy.spawnSpeed = 0;
+    drawText('Game Over!');
+  } else {
+    playerMovement();
+    player.attack();
   }
 }
+
+function drawText(text: string) {
+  ctx.font = "40px 'Press Start 2P'";
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = 'white';
+  ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+}
+
 function laserUpdateClean() {
   player.lasers.forEach((laser) => {
     laser.update();
@@ -259,16 +273,16 @@ function collisionDetection() {
   });
 }
 
-function playerMovementAttack() {
+function playerMovement() {
   if (keys.a.pressed && player.position.x + 70 > 0) {
-    player.velocity.x = -6;
+    player.velocity.x = -10;
     player.spriteState('turnLeft');
   } else if (
     keys.d.pressed &&
     player.position.x + player.velocity.x - 70 + player.image.width <
       canvas.width
   ) {
-    player.velocity.x = 6;
+    player.velocity.x = 10;
     player.spriteState('turnRight');
   } else player.spriteState('idle');
 
@@ -285,9 +299,6 @@ function playerMovementAttack() {
   ) {
     player.velocity.y = 6;
     player.spriteState('back');
-  }
-  if (keys.space.pressed) {
-    player.attack();
   }
 }
 
@@ -348,13 +359,6 @@ window.addEventListener('keyup', (e) => {
   }
 });
 
-function menu() {
-  //menu screen
-  ctx.fillStyle = 'wheat';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  document.getElementById('play')!.addEventListener('click', main);
-}
-
 let level = 'Wave 1';
 let stageTimerId = 0;
 let stageTimer = 3;
@@ -362,8 +366,7 @@ function stages() {
   if (stageTimer > 0) {
     stageTimerId = setTimeout(stages, 1000);
     stageTimer -= 1;
-    document.getElementById('level')!.innerHTML =
-      'Level:' + level + '(' + stageTimer + ')';
+    document.getElementById('level')!.innerHTML = 'Level:' + level;
   } else if (stageTimer <= 0) {
     clearTimeout(stageTimerId);
     stageTimer = 3;
@@ -381,9 +384,9 @@ function stages() {
         stages();
         break;
       case 'Wave 3':
-        level = 'Boss';
+        level = 'Final';
         document.getElementById('level')!.innerHTML = 'Level:' + level;
-        /*  enemy.speed = 0.0; */
+        enemy.speed = 7;
         break;
     }
   }
