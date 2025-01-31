@@ -10,7 +10,7 @@ export class Laser {
   constructor({ position, velocity, imageSrc }: LaserConstructor) {
     this.position = position;
     this.velocity = velocity;
-    this.width = 10;
+    this.width = 20;
     this.height = 20;
     this.image = new Image();
     this.image.src = imageSrc;
@@ -18,7 +18,7 @@ export class Laser {
   draw() {
     ctx.drawImage(
       this.image,
-      this.position.x,
+      this.position.x - 4.4,
       this.position.y,
       this.width,
       this.height

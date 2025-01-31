@@ -9,6 +9,9 @@ export const ctx = <CanvasRenderingContext2D>canvas.getContext('2d');
 canvas.height = 600;
 canvas.width = 800;
 
+ctx.font = "20px 'Press Start 2P'";
+ctx.fillStyle = 'white';
+
 const player = new PlayerShip({
   position: {
     x: 300,
@@ -88,28 +91,36 @@ function main() {
   background.update();
   window.requestAnimationFrame(main);
   player.movementMechanics();
-  enemyUpdateClean();
   player.update();
-  laserUpdateClean();
   collisionDetection();
-  document.getElementById('health')!.innerHTML = 'Health:' + player.health;
+
   if (player.health === 0) {
-    player.spriteState('destroyed');
-    enemy.enemies = [];
-    enemy.spawnSpeed = 0;
-    drawText('Game Over!');
-  } else {
-    playerMovement();
-    player.attack();
-  }
+    playerDead();
+  } else playerAlive();
 }
 
-function drawText(text: string) {
-  ctx.font = "40px 'Press Start 2P'";
+function playerDead() {
+  if (stageTimer === 0) {
+    location.reload();
+  }
+  player.spriteState('destroyed');
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillStyle = 'white';
-  ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+  ctx.fillText(
+    `Game Over!\nRestarts in ${stageTimer}`,
+    canvas.width / 2,
+    canvas.height / 2
+  );
+}
+function playerAlive() {
+  ctx.textAlign = 'start';
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillText(`Health:${player.health}`, 20, 40);
+  ctx.fillText(`Score:${score}`, 20, 70);
+  playerMovement();
+  player.attack();
+  enemyUpdateClean();
+  laserUpdateClean();
 }
 
 function laserUpdateClean() {
@@ -186,6 +197,7 @@ function collisionDetection() {
         !enemyShip.isDead
       ) {
         enemyShip.spriteState('destroyed');
+        score += Math.floor(Math.random() * 100) + 1;
         setTimeout(function () {
           const index = enemy.enemies.indexOf(enemyShip);
           if (index > -1) {
@@ -359,36 +371,19 @@ window.addEventListener('keyup', (e) => {
   }
 });
 
-let level = 'Wave 1';
-let stageTimerId = 0;
-let stageTimer = 3;
+let score = 0;
+let stageTimerId: number;
+let stageTimer = 10;
 function stages() {
   if (stageTimer > 0) {
     stageTimerId = setTimeout(stages, 1000);
     stageTimer -= 1;
-    document.getElementById('level')!.innerHTML = 'Level:' + level;
   } else if (stageTimer <= 0) {
     clearTimeout(stageTimerId);
-    stageTimer = 3;
-    switch (level) {
-      case 'Wave 1':
-        level = 'Wave 2';
-        enemy.spawnSpeed = 0.3;
-        enemy.speed = 3;
-        stages();
-        break;
-      case 'Wave 2':
-        level = 'Wave 3';
-        enemy.spawnSpeed = 0.45;
-        enemy.speed = 5;
-        stages();
-        break;
-      case 'Wave 3':
-        level = 'Final';
-        document.getElementById('level')!.innerHTML = 'Level:' + level;
-        enemy.speed = 7;
-        break;
-    }
+    stageTimer = 10;
+    enemy.spawnSpeed += 0.1;
+    enemy.speed += 2;
+    stages();
   }
 }
 
